@@ -1,0 +1,72 @@
+// 計算應有的特休天數
+function calculateVacationDays(startDate) {
+  const currentDate = new Date();
+  const start = new Date(startDate);
+  const yearsWorked = currentDate.getFullYear() - start.getFullYear();
+  const monthsWorked = currentDate.getMonth() - start.getMonth();
+
+  let totalYearsWorked = yearsWorked;
+  if (monthsWorked < 0 || (monthsWorked === 0 && currentDate.getDate() < start.getDate())) {
+    totalYearsWorked--;
+  }
+
+  if (totalYearsWorked < 1) {
+    return 0; // 未滿 1 年
+  } else if (totalYearsWorked === 1) {
+    return 3; // 滿 1 年 3 天
+  } else if (totalYearsWorked === 2) {
+    return 7; // 滿 2 年 7 天
+  } else {
+    return Math.min(7 + (totalYearsWorked - 2), 30); // 每年多一天，最多 30 天
+  }
+}
+
+// 替換 ID 的中間三碼為星號
+function maskID(id) {
+  if (id.length < 7) {
+    return id; // 若 ID 短於 7 碼，則不處理
+  }
+  return id.slice(0, 3) + '***' + id.slice(6);
+}
+
+// 獲取 Google Sheets 數據
+async function fetchEmployeeData() {
+  const sheetId = '1BuTiFQZL6tqXgrJeMkvH2Hlig8iJZuQTX8y3-lrCU1M'; // 替換為你的試算表ID
+  const apiKey = 'AIzaSyCJnHB_yYKToK0ugnPXP__DgfbbGNzn6P0'; // 這裡放你的API金鑰
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1?key=${apiKey}`;
+
+  const response = await fetch(url);
+  const data = await response.json();
+  return data.values; // 返回所有數據
+}
+
+// 處理查詢表單提交
+document.getElementById('query-form').addEventListener('submit', async function (e) {
+  e.preventDefault();
+
+  const name = document.getElementById('name').value;
+  const id = document.getElementById('id').value;
+  const employeeData = await fetchEmployeeData(); // 獲取員工數據
+
+  // 在這裡查找員工的入職日期
+  let startDate;
+  for (let i = 1; i < employeeData.length; i++) { // 從1開始跳過標題
+    if (employeeData[i][0] === name && employeeData[i][1] === id) {
+      startDate = employeeData[i][2];
+      break;
+    }
+  }
+
+  if (!startDate) {
+    document.getElementById('result').textContent = "查無此員工資料。";
+    return;
+  }
+
+  // 計算應有特休天數
+  const vacationDays = calculateVacationDays(startDate);
+  const maskedID = maskID(id); // 處理 ID
+
+  // 顯示查詢結果
+  const resultArea = document.getElementById('result');
+  resultArea.textContent = `${name} (ID: ${maskedID}) 應有特休天數: ${vacationDays} 天`;
+});
