@@ -1,0 +1,12 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+#query-area {
+  margin-top: 20px;
+}
+
+#result-area {
+  margin-top: 10px;
+}
