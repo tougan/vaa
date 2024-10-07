@@ -32,7 +32,7 @@ function maskID(id) {
 // 獲取 Google Sheets 數據
 async function fetchEmployeeData() {
   const sheetId = '1tKCToWcF8EE22ZQhR1_tOB6VBE5KWV2H'; // 替換為你的試算表ID
-  const apiKey = 'AIzaSyBxtKj_m_L5HzT9qalUD0U7deSkzDcB678'; // 這裡放你的API金鑰
+  const apiKey = '86a025b1cf1281913e275816b57fa696e5552c0b'; // 這裡放你的API金鑰
    const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1?key=${apiKey}`;
 
 
