@@ -29,12 +29,20 @@ function maskID(id) {
   return id.slice(0, 3) + '***' + id.slice(6);
 }
 
-// 獲取 Google Sheets 數據
-async function fetchEmployeeData() {
-  const sheetId = '1tKCToWcF8EE22ZQhR1_tOB6VBE5KWV2H'; // 替換為你的試算表ID
-  const apiKey = 'AIzaSyBxtKj_m_L5HzT9qalUD0U7deSkzDcB678'; // 這裡放你的API金鑰
-   const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1?key=${apiKey}`;
-
+const apiKey = "<AIzaSyBxtKj_m_L5HzT9qalUD0U7deSkzDcB678>";
+const sheetId = "<1tKCToWcF8EE22ZQhR1_tOB6VBE5KWV2H>";
+// Sheets 中要取得的資料範圍，格式如下
+const range = "工作表1!A1:B5";
+// Sheets API 的 URL
+const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKey}`;
+ 
+// 使用 fetch 打 API
+fetch(url)
+  .then((response) => response.json())
+  .then((data) => {
+    console.log(data);
+  })
+  .catch((error) => console.error("Error:", error));
 
   const response = await fetch(url);
   const data = await response.json();
